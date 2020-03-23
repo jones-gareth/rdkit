@@ -184,6 +184,8 @@ ExplicitBitVect *PatternFingerprintMol(const ROMol &mol, unsigned int fpSize,
   PRECONDITION(!setOnlyBits || setOnlyBits->getNumBits() == fpSize,
                "bad setOnlyBits size");
 
+  const auto tautomerFingerprints = false;
+
   std::vector<const ROMol *> patts;
   patts.reserve(10);
   unsigned int idx = 0;
@@ -269,6 +271,7 @@ ExplicitBitVect *PatternFingerprintMol(const ROMol &mol, unsigned int fpSize,
       if (isQuery) {
         continue;
       }
+      auto tautomerBitId = bitId;
       ROMol::EDGE_ITER firstB, lastB;
       boost::tie(firstB, lastB) = patt->getEdges();
 #ifdef VERBOSE_FINGERPRINTING
@@ -280,6 +283,7 @@ ExplicitBitVect *PatternFingerprintMol(const ROMol &mol, unsigned int fpSize,
         const Bond *mbond = mol.getBondBetweenAtoms(
             amap[pbond->getBeginAtomIdx()], amap[pbond->getEndAtomIdx()]);
 
+        // TODO merge query logic into tautomer fingerprints when applicable.
         if (isQueryBond[mbond->getIdx()]) {
           isQuery = true;
 #ifdef VERBOSE_FINGERPRINTING
@@ -287,10 +291,25 @@ ExplicitBitVect *PatternFingerprintMol(const ROMol &mol, unsigned int fpSize,
 #endif
           break;
         }
+
+        // For tautomer bits aromatic bonds, double bonds and single bonds from
+        // SMARTS always hash the same:
+        if (tautomerFingerprints) {
+          if (mbond->getIsAromatic() || mbond->getBondType() == Bond::SINGLE ||
+              mbond->getBondType() == Bond::DOUBLE ||
+              mbond->getBondType() == Bond::AROMATIC) {
+            gboost::hash_combine(tautomerBitId, -1);
+#ifdef VERBOSE_FINGERPRINTING
+            std::cerr << "T ";
+#endif
+          }
+        }
+
         // makes sure aromatic bonds and single bonds from SMARTS always hash
         // the same:
         // if(!mbond->getIsAromatic() && mbond->getBondType()!=Bond::SINGLE &&
         //   mbond->getBondType()!=Bond::AROMATIC){
+        // default hashing by bond type
         if (!mbond->getIsAromatic()) {
           gboost::hash_combine(bitId, (std::uint32_t)mbond->getBondType());
 #ifdef VERBOSE_FINGERPRINTING
@@ -311,6 +330,13 @@ ExplicitBitVect *PatternFingerprintMol(const ROMol &mol, unsigned int fpSize,
         std::cerr << " set: " << bitId << " " << bitId % fpSize;
 #endif
         res->setBit(bitId % fpSize);
+        if (tautomerFingerprints) {
+#ifdef VERBOSE_FINGERPRINTING
+          std::cerr << " tset: " << tautomerBitId << " "
+                    << tautomerBitId % fpSize;
+#endif
+          res->setBit(tautomerBitId % fpSize);
+        }
       }
     }
   }

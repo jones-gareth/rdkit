@@ -24,8 +24,11 @@ parser.add_argument("--validate", dest='validateResults', default=False, action=
                     help="validate that the screenout isn't missing anything")
 parser.add_argument("--short", dest='doShort', default=False, action='store_true',
                     help="run a small subset of the molecules")
+parser.add_argument("--fingerprintSize", dest='fingerprintSize', default=2048, help='Define fingerpint size', type=int)
 args = parser.parse_args()
 
+fingerprint_size=args.fingerprintSize
+logger.info('fingerprint size {}'.format(fingerprint_size))
 ts = []
 
 logger.info('mols from smiles')
@@ -69,9 +72,9 @@ logger.info(f'Results{len(ts)}: {t2-t1 : .2f} seconds')
 
 logger.info('generating pattern fingerprints for queries')
 t1 = time.time()
-fragsfps = [Chem.PatternFingerprint(m, 2048) for m in frags]
-leadsfps = [Chem.PatternFingerprint(m, 2048) for m in leads]
-piecesfps = [Chem.PatternFingerprint(m, 2048) for m in pieces]
+fragsfps = [Chem.PatternFingerprint(m, fingerprint_size) for m in frags]
+leadsfps = [Chem.PatternFingerprint(m, fingerprint_size) for m in leads]
+piecesfps = [Chem.PatternFingerprint(m, fingerprint_size) for m in pieces]
 t2 = time.time()
 ts.append(t2 - t1)
 logger.info(f'Results{len(ts)}: {t2-t1 : .2f} seconds')
