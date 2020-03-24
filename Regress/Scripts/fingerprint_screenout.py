@@ -64,7 +64,7 @@ logger.info(f'Results{len(ts)}: {t2-t1 : .2f} seconds')
 
 logger.info('generating pattern fingerprints for mols')
 t1 = time.time()
-mfps = [Chem.PatternFingerprint(m) for m in mols]
+mfps = [Chem.PatternFingerprint(m, fingerprint_size) for m in mols]
 t2 = time.time()
 ts.append(t2 - t1)
 logger.info(f'Results{len(ts)}: {t2-t1 : .2f} seconds')
