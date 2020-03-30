@@ -184,6 +184,8 @@ ExplicitBitVect *PatternFingerprintMol(const ROMol &mol, unsigned int fpSize,
   PRECONDITION(!setOnlyBits || setOnlyBits->getNumBits() == fpSize,
                "bad setOnlyBits size");
 
+  const auto tautomerFingerprints = true;
+
   std::vector<const ROMol *> patts;
   patts.reserve(10);
   unsigned int idx = 0;
