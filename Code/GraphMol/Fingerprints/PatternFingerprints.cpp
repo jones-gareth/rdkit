@@ -177,14 +177,12 @@ bool isPatternComplexQuery(const Bond *b) {
 // caller owns the result, it must be deleted
 ExplicitBitVect *PatternFingerprintMol(const ROMol &mol, unsigned int fpSize,
                                        std::vector<unsigned int> *atomCounts,
-                                       ExplicitBitVect *setOnlyBits) {
+                                       ExplicitBitVect *setOnlyBits, bool tautomerFingerprints) {
   PRECONDITION(fpSize != 0, "fpSize==0");
   PRECONDITION(!atomCounts || atomCounts->size() >= mol.getNumAtoms(),
                "bad atomCounts size");
   PRECONDITION(!setOnlyBits || setOnlyBits->getNumBits() == fpSize,
                "bad setOnlyBits size");
-
-  const auto tautomerFingerprints = true;
 
   std::vector<const ROMol *> patts;
   patts.reserve(10);
