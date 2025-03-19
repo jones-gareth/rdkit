@@ -39,6 +39,8 @@
 #include <GraphMol/Fingerprints/MACCS.h>
 %}
 
+%shared_ptr(ExplicitBitVect)
+
 %template(UIntPair) std::pair<std::uint32_t,std::uint32_t>;
 %template(UIntPairVect) std::vector<std::pair<std::uint32_t,std::uint32_t> >;
 %template(BitInfoMap) std::map<unsigned int,std::vector<std::pair<unsigned int,unsigned int> > >;

@@ -37,6 +37,12 @@
 #include <DataStructs/SparseIntVect.h>
 #include <GraphMol/Fingerprints/AtomPairs.h>
 %}
+
+%shared_ptr(ExplicitBitVect)
+%shared_ptr(RDKit::SparseIntVect<std::int32_t>)
+%shared_ptr(RDKit::SparseIntVect<std::uint32_t>)
+%shared_ptr(RDKit::SparseIntVect<std::int64_t>)
+
 %include <DataStructs/BitVects.h>
 %include <DataStructs/SparseIntVect.h>
 
@@ -85,6 +91,7 @@
     return res;
   }
 }
+
 %newobject getAtomPairFingerprint;
 %newobject getHashedAtomPairFingerprint;
 %newobject getHashedAtomPairFingerprintAsBitVect;

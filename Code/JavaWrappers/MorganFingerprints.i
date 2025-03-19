@@ -39,6 +39,9 @@
 #include <MorganFingerprints.h>
 %}
 
+%shared_ptr(ExplicitBitVect)
+%shared_ptr(RDKit::SparseIntVect<std::uint32_t>)
+
 #if SWIGCSHARP
 SWIG_STD_VECTOR_SPECIALIZE_MINIMUM(UInt_Pair, std::pair<unsigned int,int> );
 SWIG_STD_VECTOR_SPECIALIZE_MINIMUM(UInt_Pair_Vect, std::vector< std::pair<unsigned int,int> >);
@@ -46,15 +49,42 @@ SWIG_STD_VECTOR_SPECIALIZE_MINIMUM(UInt_Pair_Vect, std::vector< std::pair<unsign
 
 //%include <DataStructs/SparseIntVect.h>
 
+/*
+%ignore RDKit::MorganFingerprints::getFingerprint;
+%ignore RDKit::MorganFingerprints::getFingerprintAsBitVect;
+%inline {
+    boost::shared_ptr< RDKit::SparseIntVect<std::uint32_t> > getMorganFingerprint(
+			const RDKit::ROMol &mol, unsigned int radius,
+			std::vector<boost::uint32_t> *invariants = nullptr,
+			const std::vector<boost::uint32_t> *fromAtoms = nullptr,
+			bool useChirality = false, bool useBondTypes = true, bool useCounts = true,
+			bool onlyNonzeroInvariants = false, RDKit::MorganFingerprints::BitInfoMap *atomsSettingBits = nullptr,
+			bool includeRedundantEnvironments = false) {
+		RDKit::SparseIntVect<std::uint32_t> *fingerprint = RDKit::MorganFingerprints::getFingerprint(mol, radius, invariants, fromAtoms,
+		    useChirality, useBondTypes, useCounts, onlyNonzeroInvariants, atomsSettingBits, includeRedundantEnvironments);
+		boost::shared_ptr<RDKit::SparseIntVect<std::uint32_t> > result(fingerprint);
+		return result;
+	}
 
-# %newobject RDKit::MorganFingerprints::getFingerprint;
-%newobject getFingerprint;
+	boost::shared_ptr<ExplicitBitVect> getMorganFingerprintAsBitVect(
+			const RDKit::ROMol &mol, unsigned int radius, unsigned int nBits,
+			std::vector<std::uint32_t> *invariants = nullptr,
+			const std::vector<std::uint32_t> *fromAtoms = nullptr,
+			bool useChirality = false, bool useBondTypes = true,
+			bool onlyNonzeroInvariants = false, RDKit::MorganFingerprints::BitInfoMap *atomsSettingBits = nullptr,
+			bool includeRedundantEnvironments = false) {
+		ExplicitBitVect *fingerprint = RDKit::MorganFingerprints::getFingerprintAsBitVect(mol, radius, nBits, invariants, fromAtoms,
+		    useChirality, useBondTypes, onlyNonzeroInvariants, atomsSettingBits, includeRedundantEnvironments);
+		boost::shared_ptr<ExplicitBitVect> result(fingerprint);
+		return result;
+	}
+}
+*/
+
+%newobject RDKit::MorganFingerprints::getFingerprint;
 %rename(MorganFingerprintMol) RDKit::MorganFingerprints::getFingerprint;
-%newobject RDKit::MorganFingerprints::MorganFingerprintMol;
-# %newobject RDKit::MorganFingerprints::getFingerprintAsBitVect;
-%newobject getFingerprintAsBitVect;
+%newobject RDKit::MorganFingerprints::getFingerprintAsBitVect;
 %rename(getMorganFingerprintAsBitVect) RDKit::MorganFingerprints::getFingerprintAsBitVect;
-%newobject RDKit::MorganFingerprints::getMorganFingerprintAsBitVect;
 
 %include <GraphMol/Fingerprints/MorganFingerprints.h>
 
